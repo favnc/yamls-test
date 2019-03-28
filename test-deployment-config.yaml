@@ -1,0 +1,84 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: '2019-03-22T14:27:48Z'
+  generation: 8
+  name: test-deployment-config
+  namespace: test1
+  resourceVersion: '1305795'
+  selfLink: >-
+    /apis/apps.openshift.io/v1/namespaces/test1/deploymentconfigs/test-deployment-config
+  uid: aacbe403-4cae-11e9-b9e7-080027d0e8cc
+spec:
+  replicas: 1
+  selector:
+    name: test-deployment
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      post:
+        failurePolicy: Ignore
+        tagImages:
+          - containerName: ruby-helloworld
+            to:
+              kind: ImageStreamTag
+              name: 'origin-ruby-sample:deployed'
+      timeoutSeconds: 20
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: test-deployment
+    spec:
+      containers:
+        - image: openshift/origin-pod
+          imagePullPolicy: IfNotPresent
+          name: ruby-helloworld
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 3Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - emptyDir: {}
+          name: vol1
+  test: false
+  triggers:
+    - type: ConfigChange
+status:
+  availableReplicas: 1
+  conditions:
+    - lastTransitionTime: '2019-03-26T23:16:07Z'
+      lastUpdateTime: '2019-03-26T23:16:07Z'
+      message: Deployment config has minimum availability.
+      status: 'True'
+      type: Available
+    - lastTransitionTime: '2019-03-26T23:16:06Z'
+      lastUpdateTime: '2019-03-26T23:16:08Z'
+      message: >-
+        replication controller "test-deployment-config-8" successfully rolled
+        out
+      reason: NewReplicationControllerAvailable
+      status: 'True'
+      type: Progressing
+  details:
+    causes:
+      - type: Manual
+    message: manual change
+  latestVersion: 8
+  observedGeneration: 8
+  readyReplicas: 1
+  replicas: 1
+  unavailableReplicas: 0
+  updatedReplicas: 1
