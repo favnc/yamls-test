@@ -1,0 +1,29 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Amazon Simple VPC'
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: "fellipe-vpc"
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'false'
+      InstanceTenancy: default
+      Tags:
+      - Key: Name
+        Value: !Sub "${ProjectName}-{{vpc-suffix}}"
+
+Outputs:
+  VPCID:
+    Value:
+      Ref: VPC
+    Description: VPC ID
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-VPCID"
