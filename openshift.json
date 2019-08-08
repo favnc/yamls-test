@@ -1,0 +1,97 @@
+{
+   "kind": "List",
+   "items": [
+      {
+         "kind": "Service",
+         "metadata": {
+            "name": "recreate-example"
+         },
+         "spec": {
+            "ports": [
+               {
+                  "port": 8080,
+                  "targetPort": 8080
+               }
+            ],
+            "selector": {
+               "deploymentconfig": "recreate-example"
+            }
+         }
+      },
+      {
+         "kind": "DeploymentConfig",
+         "metadata": {
+            "name": "recreate-example"
+         },
+         "spec": {
+            "replicas": 7,
+            "selector": {
+               "deploymentconfig": "recreate-example"
+            },
+            "strategy": {
+               "type": "Recreate"
+            },
+            "template": {
+               "metadata": {
+                  "labels": {
+                     "deploymentconfig": "recreate-example"
+                  }
+               },
+               "spec": {
+                  "containers": [
+                     {
+                        "image": "openshift/deployment-example:v1",
+                        "name": "deployment-example",
+                        "ports": [
+                           {
+                              "containerPort": 8080,
+                              "protocol": "TCP"
+                           }
+                        ]
+                     }
+                  ]
+               }
+            },
+            "triggers": [
+               {
+                  "type": "ConfigChange"
+               },
+               {
+                  "imageChangeParams": {
+                     "automatic": true,
+                     "containerNames": [
+                        "deployment-example"
+                     ],
+                     "from": {
+                        "kind": "ImageStreamTag",
+                        "name": "recreate-example:latest"
+                     }
+                  },
+                  "type": "ImageChange"
+               }
+            ]
+         }
+      },
+      {
+         "kind": "ImageStream",
+         "metadata": {
+            "name": "recreate-example"
+         },
+         "spec": {
+            "dockerImageRepository": "openshift/deployment-example"
+         }
+      },
+      {
+         "kind": "Route",
+         "metadata": {
+            "name": "recreate-example"
+         },
+         "spec": {
+            "to": {
+               "kind": "Service",
+               "name": "recreate-example"
+            }
+         }
+      }
+   ]
+}
